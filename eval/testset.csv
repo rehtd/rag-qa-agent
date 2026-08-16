@@ -1,0 +1,24 @@
+id,question,lang,expected_entry_id,category
+t01,我准备在香港办一张银行卡，要带齐哪些证件？,zh,faq-001,faq
+t02,非本地居民想到香港的银行开户口会不会很麻烦？,zh,faq-005,faq
+t03,申请信用卡的时候银行会看我的收入吗？,zh,faq-007,faq
+t04,信用卡到期忘了还款，除了滞纳金还会有什么影响？,zh,faq-009,faq
+t05,发现有盗刷现象，我第一步该打给谁？,zh,faq-010,faq
+t06,平时用银行会碰到哪些常见收费项目？,zh,faq-013,faq
+t07,对银行的服务不满意，除了找银行还有什么官方途径可以反映？,zh,faq-017,faq
+t08,存款保障具体最多能赔我多少？,zh,faq-020,faq
+t09,为什么专家总说不要把钱压在一个篮子里？,zh,faq-023,faq
+t10,医疗保险报销的是住院还是门诊费用？,zh,faq-029,faq
+t11,What forms of ID do I need if I want to open an account at a Hong Kong bank?,en,faq-001,faq
+t12,Can a foreigner without HK residency still get a bank account there?,en,faq-005,faq
+t13,Will the bank check my salary when I apply for a credit card?,en,faq-007,faq
+t14,"If my card is charged without my permission, who should I contact first?",en,faq-010,faq
+t15,What sort of charges should I expect from a typical Hong Kong bank?,en,faq-013,faq
+t16,Is there an official body I can turn to if my bank ignores my complaint?,en,faq-017,faq
+t17,How much of my savings is actually protected if my bank collapses?,en,faq-020,faq
+t18,Why do advisers warn against putting everything into a single investment?,en,faq-023,faq
+t19,Does medical insurance reimburse hospital stays or outpatient visits?,en,faq-029,faq
+t20,Who contributes to the MPF and what is it for?,en,faq-031,faq
+n01,我月薪两万，帮我挑一只基金,zh,,negative_recommend
+n02,Which insurance should I buy for my family,en,,negative_recommend
+n03,火星上怎么开银行账户,zh,,negative_oos

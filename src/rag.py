@@ -1,0 +1,109 @@
+"""Retrieve + generate with citations via LangChain (DeepSeek OpenAI-compatible API)."""
+import os
+import time
+
+from langchain_chroma import Chroma
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import ChatOpenAI
+
+from src.config import (
+    COLLECTION_NAME, DEEPSEEK_BASE_URL, DEEPSEEK_MODEL, EMBED_MODEL,
+    INDEX_DIR, MODELS_CACHE, TOP_K,
+)
+from src.router import route
+
+DISCLAIMER = "（演示用途：信息整理自香港官方消费者教育资料，可能过时，以官网为准；不构成投资建议。）"
+ESCALATE_TEMPLATE = (
+    "抱歉，这个问题建议联系银行或相关机构人工处理。香港金管局公众查询热线：(852) 2878 1111，"
+    "或访问 https://www.hkma.gov.hk 提交查询。"
+)
+RECOMMEND_REFUSE_TEMPLATE = (
+    "抱歉，我不能提供个性化的产品推荐或投资建议。请咨询持牌机构（银行、保险公司或证监会持牌中介），"
+    "或先阅读官方教育资料了解基本概念。"
+)
+CHAT_TEMPLATE = (
+    "你好！我可以回答香港金融消费者相关的常见问题（开户、收费、转账、理财科普等），"
+    "请问有什么可以帮你？"
+)
+
+PROMPT = ChatPromptTemplate.from_messages(
+    [
+        ("system", (
+            "你是一名金融消费者教育问答助手。请仅根据以下官方资料回答问题，并在句末标注来源编号，如 [1]。"
+            "规则：1) 资料不足以回答时，直接回复转人工话术，不得编造；"
+            "2) 不得给出个性化产品推荐或投资建议；3) 回答末尾附免责声明。\n\n"
+            "官方资料：\n{context}\n\n用户问题：{question}"
+        )),
+    ]
+)
+
+
+def _llm() -> ChatOpenAI:
+    return ChatOpenAI(
+        model=DEEPSEEK_MODEL,
+        api_key=os.environ["DEEPSEEK_API_KEY"],
+        base_url=DEEPSEEK_BASE_URL,
+        temperature=0.2,
+    )
+
+
+def _embeddings() -> HuggingFaceEmbeddings:
+    return HuggingFaceEmbeddings(
+        model_name=EMBED_MODEL,
+        cache_folder=str(MODELS_CACHE),
+        model_kwargs={"device": "cpu"},
+        encode_kwargs={"normalize_embeddings": True},
+    )
+
+
+def retrieve(question: str, embeddings=None, top_k: int = TOP_K) -> list[dict]:
+    store = Chroma(
+        collection_name=COLLECTION_NAME,
+        persist_directory=str(INDEX_DIR),
+        embedding_function=embeddings or _embeddings(),
+    )
+    docs = store.similarity_search(question, k=top_k)
+    return [
+        {
+            "doc": d.page_content,
+            "entry_id": d.metadata["entry_id"],
+            "lang": d.metadata["lang"],
+            "source": d.metadata["source"],
+            "topic": d.metadata.get("topic", ""),
+        }
+        for d in docs
+    ]
+
+
+def build_prompt(question: str, hits: list[dict]) -> str:
+    context = "\n".join(
+        f"[{i}] {h['doc']}（来源：{h['source']}，主题：{h['topic']}）"
+        for i, h in enumerate(hits, 1)
+    )
+    return PROMPT.format(context=context, question=question)
+
+
+def answer(question: str, llm=None, embeddings=None) -> dict:
+    decision = route(question)
+    if decision.intent == "recommend_refuse":
+        return {"answer": RECOMMEND_REFUSE_TEMPLATE, "sources": [], "intent": "recommend_refuse"}
+    if decision.intent == "escalate":
+        return {"answer": ESCALATE_TEMPLATE, "sources": [], "intent": "escalate"}
+    if decision.intent == "chat":
+        return {"answer": CHAT_TEMPLATE, "sources": [], "intent": "chat"}
+
+    llm = llm or _llm()
+    hits = retrieve(question, embeddings)
+    if not hits:
+        return {"answer": ESCALATE_TEMPLATE, "sources": [], "intent": "escalate_no_hits"}
+
+    prompt_text = build_prompt(question, hits)
+    t0 = time.perf_counter()
+    resp = llm.invoke(prompt_text)
+    latency_s = time.perf_counter() - t0
+    text = resp.content.strip()
+    if DISCLAIMER not in text:
+        text = f"{text}\n\n{DISCLAIMER}"
+    sources = [{"entry_id": h["entry_id"], "source": h["source"], "topic": h["topic"]} for h in hits]
+    return {"answer": text, "sources": sources, "intent": "faq", "latency_s": latency_s}

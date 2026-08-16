@@ -9,7 +9,7 @@ from langchain_openai import ChatOpenAI
 
 from src.config import (
     COLLECTION_NAME, DEEPSEEK_BASE_URL, DEEPSEEK_MODEL, EMBED_MODEL,
-    INDEX_DIR, MODELS_CACHE, TOP_K,
+    INDEX_DIR, MODELS_CACHE, RETRIEVAL_MAX_DISTANCE, TOP_K,
 )
 from src.router import route
 
@@ -57,23 +57,29 @@ def _embeddings() -> HuggingFaceEmbeddings:
     )
 
 
+def _filter_by_distance(scored, max_distance=RETRIEVAL_MAX_DISTANCE) -> list[dict]:
+    out = []
+    for doc, score in scored:
+        if score > max_distance:
+            continue
+        out.append({
+            "doc": doc.page_content,
+            "entry_id": doc.metadata["entry_id"],
+            "lang": doc.metadata["lang"],
+            "source": doc.metadata["source"],
+            "topic": doc.metadata.get("topic", ""),
+        })
+    return out
+
+
 def retrieve(question: str, embeddings=None, top_k: int = TOP_K) -> list[dict]:
     store = Chroma(
         collection_name=COLLECTION_NAME,
         persist_directory=str(INDEX_DIR),
         embedding_function=embeddings or _embeddings(),
     )
-    docs = store.similarity_search(question, k=top_k)
-    return [
-        {
-            "doc": d.page_content,
-            "entry_id": d.metadata["entry_id"],
-            "lang": d.metadata["lang"],
-            "source": d.metadata["source"],
-            "topic": d.metadata.get("topic", ""),
-        }
-        for d in docs
-    ]
+    scored = store.similarity_search_with_score(question, k=top_k)
+    return _filter_by_distance(scored)
 
 
 def build_prompt(question: str, hits: list[dict]) -> str:

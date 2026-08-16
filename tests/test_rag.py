@@ -45,3 +45,15 @@ def test_no_hits_escalates(monkeypatch):
     monkeypatch.setattr("src.rag.retrieve", lambda *a, **k: [])
     r = answer("火星上怎么开户", llm=object())
     assert r["intent"] == "escalate_no_hits"
+
+def test_filter_by_distance_drops_unrelated():
+    from src.rag import _filter_by_distance
+
+    class D:
+        def __init__(self):
+            self.page_content = "x"
+            self.metadata = {"entry_id": "faq-001", "lang": "zh", "source": "s", "topic": "t"}
+
+    kept = _filter_by_distance([(D(), 0.3), (D(), 0.9)])
+    assert len(kept) == 1
+    assert kept[0]["entry_id"] == "faq-001"

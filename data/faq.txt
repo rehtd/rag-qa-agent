@@ -1,0 +1,26 @@
+# 香港金融消费者问答数据集（演示用途）
+# 声明：内容整理自香港官方消费者教育公开资料（IFEC/HKMA），部分条目为演示自编；非银行官方服务、不构成投资建议；信息截至收录日期，可能过时，以官网为准。
+---
+q_zh: 在香港开立银行账户一般需要哪些文件？
+a_zh: 一般需要：身份证明文件（如香港身份证或护照）、住址证明（三个月内的水电费单或银行月结单）。部分银行可能要求提供入境记录或签证文件，具体要求以各银行为准。
+q_en: What documents are generally required to open a bank account in Hong Kong?
+a_en: Generally you need proof of identity (e.g. HKID card or passport) and proof of address (e.g. a utility bill or bank statement issued within the last three months). Some banks may also ask for entry records or visa documents; requirements vary by bank.
+source: 演示自编（依据香港银行业常见做法）
+date: 2026-08-16
+topic: 开户
+---
+q_zh: 存款保障计划保障什么？
+a_zh: 香港存款保障计划保障存放于计划成员的港元及外币存款，每位存款人每间银行的保障上限为八十万港元。结构性存款、五年期以上定期存款等不受保障。
+q_en: What does the Deposit Protection Scheme cover?
+a_en: The Hong Kong Deposit Protection Scheme protects HKD and foreign currency deposits placed with Scheme members, up to a protection limit of HK$800,000 per depositor per bank. Structured deposits and time deposits with a maturity over five years are not protected.
+source: https://www.dps.org.hk/ （存款保障委员会）
+date: 2026-08-16
+topic: 账户与存款
+---
+q_zh: 什么是分散投资？
+a_zh: 分散投资是指把资金投放在不同类型的资产（如股票、债券、现金）上，以减低单一资产波动带来的风险。分散投资不能完全消除风险，只能降低整体组合的波动。
+q_en: What is diversification?
+a_en: Diversification means spreading your money across different types of assets (such as stocks, bonds and cash) to reduce the impact of volatility in any single asset. It cannot eliminate risk entirely, but it can lower the overall fluctuation of a portfolio.
+source: 演示自编（基于 IFEC 钱家有道理财教育概念）
+date: 2026-08-16
+topic: 理财概念

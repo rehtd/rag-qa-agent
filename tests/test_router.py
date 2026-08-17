@@ -22,3 +22,10 @@ def test_default_faq():
 
 def test_empty_input_is_chat():
     assert route("  ").intent == "chat"
+
+
+def test_english_keywords_use_word_boundaries():
+    assert route("Why do advisers warn against putting everything into a single investment?").intent == "faq"
+    assert route("Is there an official body I can turn to if my bank ignores my complaint?").intent == "faq"
+    assert route("I want to complain about my bank").intent == "escalate"
+    assert route("我要投诉").intent == "escalate"

@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 
 RECOMMEND_KEYWORDS = [
-    "帮我选", "推荐", "买哪个", "买什么", "买哪只", "该不该买", "应不应该买",
+    "帮我选", "帮我挑", "推荐", "买哪个", "买什么", "买哪只", "该不该买", "应不应该买",
     "哪个好", "哪只基金", "哪款保险", "建议我买", "适合我吗", "选哪",
     "recommend", "which fund", "which insurance", "should i buy", "best for me",
 ]

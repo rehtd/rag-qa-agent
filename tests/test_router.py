@@ -4,6 +4,10 @@ def test_recommend_keywords_refused():
     for q in ["帮我选一只基金", "买哪个保险好", "该不该买股票", "should I buy this fund"]:
         assert route(q).intent == "recommend_refuse"
 
+
+def test_n01_bang_wo_tiao_is_recommend_refuse():
+    assert route("我月薪两万，帮我挑一只基金").intent == "recommend_refuse"
+
 def test_escalate_keywords():
     for q in ["我要投诉", "转人工", "打客服电话"]:
         assert route(q).intent == "escalate"

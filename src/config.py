@@ -14,7 +14,7 @@ EMBED_MODEL = "BAAI/bge-m3"
 COLLECTION_NAME = "faq_pairs"
 TOP_K = 3
 ANSWER_MAX_CHARS = 300
-RETRIEVAL_MAX_DISTANCE = 0.6  # L2 距离阈值：超过视为不相关，返回转人工
+RETRIEVAL_MAX_DISTANCE = 0.65  # L2 距离阈值：超过视为不相关，返回转人工
 
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 DEEPSEEK_MODEL = "deepseek-chat"

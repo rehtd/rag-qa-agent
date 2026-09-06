@@ -20,3 +20,5 @@ $env:HF_ENDPOINT = "https://hf-mirror.com"
 | faithfulness | `labels.csv` 人工判定是否忠于来源 | ≥0.85 |
 
 `labels.csv` 由用户初标、验收方复核，本脚本不代替人工判定。
+
+可视化标注器（可选）：`python -m streamlit run eval/labeler.py`

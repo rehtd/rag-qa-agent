@@ -1,5 +1,6 @@
 """Retrieve + generate with citations via LangChain (DeepSeek OpenAI-compatible API)."""
 import os
+import re
 import time
 
 from langchain_chroma import Chroma
@@ -14,6 +15,10 @@ from src.config import (
 from src.router import route
 
 DISCLAIMER = "（演示用途：信息整理自香港官方消费者教育资料，可能过时，以官网为准；不构成投资建议。）"
+DISCLAIMER_EN = (
+    "For demonstration only: information compiled from official HK consumer-education "
+    "materials, may be outdated; refer to official sources; not investment advice."
+)
 ESCALATE_TEMPLATE = (
     "抱歉，这个问题建议联系银行或相关机构人工处理。香港金管局公众查询热线：(852) 2878 1111，"
     "或访问 https://www.hkma.gov.hk 提交查询。"
@@ -113,7 +118,8 @@ def answer(question: str, llm=None, embeddings=None) -> dict:
     resp = llm.invoke(prompt_text)
     latency_s = time.perf_counter() - t0
     text = resp.content.strip()
-    if DISCLAIMER not in text:
-        text = f"{text}\n\n{DISCLAIMER}"
+    disclaimer = DISCLAIMER_EN if not re.search(r"[\u4e00-\u9fff]", question) else DISCLAIMER
+    if disclaimer not in text:
+        text = f"{text}\n\n{disclaimer}"
     sources = [{"entry_id": h["entry_id"], "source": h["source"], "topic": h["topic"]} for h in hits]
     return {"answer": text, "sources": sources, "intent": "faq", "latency_s": latency_s}

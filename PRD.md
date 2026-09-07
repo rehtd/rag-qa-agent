@@ -23,7 +23,7 @@
 - F1 双语问答：中英提问，基于 FAQ 检索 + DeepSeek 生成。
 - F2 来源引用：回答标注来源编号，界面列出 source 与主题。
 - F3 四分类路由与红线拒绝：faq / chat / recommend_refuse / escalate；推荐类问题一律拒绝并转介持牌机构。
-- F4 转人工与官方渠道：投诉/人工关键词及空检索（L2 距离 > 0.6）返回 HKMA 热线 (852) 2878 1111 与官网。
+- F4 转人工与官方渠道：投诉/人工关键词及空检索（L2 距离 > 0.65）返回 HKMA 热线 (852) 2878 1111 与官网。
 
 ## 5. 非功能需求
 
@@ -42,7 +42,7 @@
 
 ```
 FAQ(中英) → 问答对切块 → bge-m3 向量化 → ChromaDB 索引
-用户提问 → 意图路由(FAQ/闲聊/推荐类拒绝/转人工) → 检索 top-k（L2≤0.6）→ DeepSeek 生成(带引用+免责) → Streamlit 双语界面
+用户提问 → 意图路由(FAQ/闲聊/推荐类拒绝/转人工) → 检索 top-k（L2≤0.65）→ DeepSeek 生成(带引用+免责) → Streamlit 双语界面
 ```
 
 ```mermaid
@@ -66,7 +66,7 @@ flowchart LR
 - 测试集：`eval/testset.csv` 23 题 held-out（语料外改写问法）+ 推荐拒绝/OOS 负例。
 - 自动指标：`eval/run_eval.py` 计算 Top-3 召回、p95 延迟、红线合规（推荐必须拒绝、OOS 必须转人工）。
 - 人工指标：`eval/labels.csv` 双人标注准确率（正确/部分正确/幻觉）与 faithfulness。
-- 检索阈值：`RETRIEVAL_MAX_DISTANCE = 0.6`（Task 6.1，相关 ≤0.55、无关 ≥0.75 间隔中点）。
+- 检索阈值：`RETRIEVAL_MAX_DISTANCE = 0.65`（Task 6.1 定 0.6；Task 9 三档实验 0.6/0.65/0.70 → 召回 90%/95%/95%，2026-08-19 DSH 裁决定 0.65：达标且更保守）。
 
 ### 8.1 最终评测结果（2026-09 收尾定稿）
 
